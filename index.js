@@ -13,8 +13,8 @@ const sslKey = process.env.REMOTE_SSL_USER_KEY;
 if (!functions.checkFile(sslCert)) process.exit();
 if (!functions.checkFile(sslKey)) process.exit();
 
-let intervalSecs = (typeof process.env.GDACS_PULL_INTERVAL !== 'undefined') ? process.env.GDACS_PULL_INTERVAL : 60;
-if (intervalSecs < 60) intervalSecs = 60;
+let intervalSecs = (typeof process.env.PULL_INTERVAL !== 'undefined') ? process.env.PULL_INTERVAL : 300;
+if (intervalSecs < 300) intervalSecs = 300;
 const logCot = (typeof process.env.LOGCOT !== 'undefined') ? (process.env.LOGCOT == "true") : false;
 
 const heartbeatIntervall = 30 * 1000;
@@ -47,7 +47,7 @@ const run = () => {
 
   client.on('data', (data) => {
     if (logCot === true) {
-      console.log(data.toString());
+      //console.log(data.toString());
     }
   })
 
@@ -86,7 +86,7 @@ const run = () => {
         for (var no in data["map"]["features"]) {
           let item = data["map"]["features"][no];
           if (item["geometry"]["type"] == "Point") {
-            let cot = functions.deepstate2cot(item, 60, ptime);
+            let cot = functions.deepstate2cot(item, intervalSecs, ptime);
             if (cot != null) {
               if (logCot === true) console.log(cot);
               client.write(cot);
