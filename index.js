@@ -86,7 +86,7 @@ const run = () => {
         for (var no in data["map"]["features"]) {
           let item = data["map"]["features"][no];
           if (item["geometry"]["type"] == "Point") {
-            let cot = functions.deepstate2cot(item, intervalSecs, ptime);
+            let cot = functions.deepstate2cot(item, interval, ptime);
             if (cot != null) {
               if (logCot === true) console.log(cot);
               client.write(cot);
