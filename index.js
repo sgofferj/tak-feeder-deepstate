@@ -76,7 +76,7 @@ const run = () => {
       {
         headers: {
           "Accept":"application/json, text/javascript, */*; q=0.01",
-          "Alt-used":"deepstatemap.live",
+          "Alt-Used":"deepstatemap.live",
           "User-Agent": "DeepState TAK feeder",
           "Connection": "keep-alive",
           "Host": "deepstatemap.live",
