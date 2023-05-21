@@ -1,5 +1,5 @@
 require('dotenv').config();
-
+const util = require('util');
 const FeedParser = require('feedparser');
 const fetch = require('node-fetch');
 const functions = require('./lib/functions.js');
@@ -17,7 +17,6 @@ let intervalSecs = (typeof process.env.PULL_INTERVAL !== 'undefined') ? process.
 if (intervalSecs < 300) intervalSecs = 300;
 const logCot = (typeof process.env.LOGCOT !== 'undefined') ? (process.env.LOGCOT == "true") : false;
 
-const heartbeatIntervall = 30 * 1000;
 var interval = intervalSecs * 1000;
 
 process.env.TZ = 'UTC';
@@ -63,30 +62,37 @@ const run = () => {
   })
 
   function heartbeat() {
-    client.write(functions.heartbeatcot(heartbeatIntervall));
+    client.write(functions.heartbeatcot(intervalSecs));
     if (logCot === true) {
-      console.log(functions.heartbeatcot(heartbeatIntervall));
+      console.log(functions.heartbeatcot(intervalSecs));
       console.log('-----')
     }
-    setTimeout(heartbeat, heartbeatIntervall);
   }
 
   function pullandfeed() {
+    heartbeat();
     var feedparser = new FeedParser();
     var req = fetch('https://deepstatemap.live/api/history/last',
       {
         headers: {
-          "User-Agent": "DeepState TAK feeder"
+          "Accept":"application/json, text/javascript, */*; q=0.01",
+          "Alt-used":"deepstatemap.live",
+          "User-Agent": "DeepState TAK feeder",
+          "Connection": "keep-alive",
+          "Host": "deepstatemap.live",
+          "Referer": "https://deepstatemap.live/",
+          "X-Requested-With": "XMLHttpRequest"
         }
       })
 
       .then((response) => response.json())
       .then((data) => {
+        //console.log(util.inspect(data, false, null, true));
         let ptime = data.id;
         for (var no in data["map"]["features"]) {
           let item = data["map"]["features"][no];
           if (item["geometry"]["type"] == "Point") {
-            let cot = functions.deepstate2cot(item, interval, ptime);
+            let cot = functions.deepstate2cot(item, intervalSecs, ptime);
             if (cot != null) {
               if (logCot === true) console.log(cot);
               client.write(cot);
