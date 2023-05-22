@@ -78,7 +78,7 @@ const run = () => {
           "Accept":"application/json, text/javascript, */*; q=0.01",
           "Alt-Used":"deepstatemap.live",
           "User-Agent": "DeepState TAK feeder",
-          "Connection": "keep-alive",
+          "Connection": "close",
           "Host": "deepstatemap.live",
           "Referer": "https://deepstatemap.live/",
           "X-Requested-With": "XMLHttpRequest"
